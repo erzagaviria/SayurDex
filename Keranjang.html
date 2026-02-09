@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator belanja - SayurDex Admin</title>
+    
+    <script>if(localStorage.getItem("daynight-theme")==="carbon"){document.documentElement.classList.add("carbon");}</script>
+    
+    <link rel="stylesheet" href="templatemo-daynight-style.css">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Reset font dasar */
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* --- PERBAIKAN JARAK MENU ATAS --- */
+        .top-nav .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 30px; /* Memberikan jarak renggang antar menu */
+        }
+
+        .top-nav .nav-item {
+            margin-right: 15px; /* Tambahan jarak safety */
+        }
+        
+        .top-nav .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px; /* Jarak antara ikon dan teks */
+            padding: 8px 12px; /* Memberi ruang klik yang nyaman */
+            white-space: nowrap; /* Mencegah teks turun baris */
+        }
+        /* ---------------------------------- */
+
+        /* Container khusus kalkulator */
+        .calc-wrapper {
+            padding: 20px 0;
+        }
+
+        /* Styling Kartu Kalkulator */
+        .card-calc {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+            background: #fff;
+            transition: transform 0.2s;
+        }
+
+        .btn-sayur {
+            background-color: #0d6efd;
+            color: white;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 8px;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .btn-sayur:hover {
+            background-color: #0b5ed7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
+            color: white;
+        }
+
+        .price-tag {
+            font-weight: bold;
+            color: #198754;
+        }
+
+        .total-box {
+            background-color: #e8f5e9;
+            color: #1b5e20;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        /* --- DARK MODE ADJUSTMENTS --- */
+        .carbon .card-calc {
+            background-color: #2a2a2a;
+            color: #e0e0e0;
+        }
+        .carbon .form-control, 
+        .carbon .input-group-text {
+            background-color: #333;
+            border-color: #444;
+            color: #fff;
+        }
+        .carbon .table-light {
+            background-color: #333;
+            color: #fff;
+        }
+        .carbon .table-hover tbody tr:hover {
+            color: #fff;
+            background-color: #444;
+        }
+        .carbon .total-box {
+            background-color: #1b5e20;
+            color: #fff;
+        }
+        .carbon .text-muted {
+            color: #aaa !important;
+        }
+        .carbon h5.fw-bold, 
+        .carbon h6.fw-bold {
+            color: #fff !important;
+        }
+        .carbon .form-label {
+            color: #fff !important;
+        }
+        
+        .main-content {
+            padding-top: 20px; 
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-menu-overlay"></div>
+    
+    <div class="mobile-menu">
+        <div class="mobile-menu-header">
+            <a href="index.html" class="logo"><div class="logo-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>SayurDex</a>
+            <button class="mobile-menu-close" onclick="closeMobileMenu()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <nav class="mobile-menu-nav">
+            <a href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+            <a href="Keranjang.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Kalkulator belanja</a>
+            <a href="inbox.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Inbox</a>
+            <a href="analytics.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Analytics</a>
+            <a href="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</a>
+        </nav>
+        <div class="mobile-menu-footer"><a href="login.html" class="mobile-logout-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</a>
+            <div class="theme-toggle">
+                <button class="theme-btn theme-btn-snow active" onclick="setTheme('snow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
+                <button class="theme-btn theme-btn-carbon" onclick="setTheme('carbon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <nav class="top-nav">
+            <div class="nav-container">
+                <div class="nav-left">
+                    <a href="index.html" class="logo"><div class="logo-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>SayurDex</a>
+                    
+                    <div class="nav-menu">
+                        <div class="nav-item"><a href="index.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a></div>
+                        <div class="nav-item"><a href="Keranjang.html" class="nav-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Kalkulator belanja</a></div>
+                        <div class="nav-item"><a href="inbox.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Inbox</a></div>
+                        <div class="nav-item"><a href="analytics.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Analytics</a></div>
+                        <div class="nav-item"><a href="settings.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</a></div>
+                    </div>
+                </div>
+                <div class="nav-right">
+                    <div class="theme-toggle">
+                        <button class="theme-btn theme-btn-snow active" onclick="setTheme('snow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
+                        <button class="theme-btn theme-btn-carbon" onclick="setTheme('carbon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+                    </div>
+                    <button class="user-menu"><div class="user-avatar">A</div><span class="user-name">Gav</span></button><a href="login.html" class="btn-logout" title="Logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></a>
+                    <button class="mobile-menu-btn" onclick="toggleMobileMenu()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-header d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="greeting">AI Budget Planner</h1>
+                    <p class="greeting-sub">Solusi cerdas belanja hemat & bergizi</p>
+                </div>
+            </div>
+
+            <div class="calc-wrapper">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="card card-calc p-4">
+                            <div class="form-group">
+                                <label for="budgetInput" class="form-label fw-bold mb-3 text-dark">Berapa budget belanja hari ini?</label>
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-text bg-transparent fw-bold border-end-0">Rp</span>
+                                    <input type="number" id="budgetInput" class="form-control border-start-0" placeholder="Contoh: 50000">
+                                    <button class="btn btn-sayur" onclick="generatePlan()">
+                                        <i class="fas fa-magic me-2"></i>Generate
+                                    </button>
+                                </div>
+                                <small class="text-muted mt-3 d-block">
+                                    <i class="fas fa-robot me-1"></i> AI SayurDex memindai harga pasar real-time area Soreang.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="loadingArea" class="text-center py-5" style="display: none;">
+                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+                    <p class="mt-3 fw-bold text-muted">Menganalisis stok pedagang & harga pasar...</p>
+                </div>
+
+                <div id="resultArea" style="display: none;">
+                    <div class="row">
+                        
+                        <div class="col-lg-7 mb-4">
+                            <div class="card card-calc h-100">
+                                <div class="card-body p-4">
+                                    <h5 class="fw-bold mb-4 text-dark"><i class="fas fa-shopping-basket me-2 text-warning"></i>Daftar Belanja</h5>
+                                    
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle">
+                                            <thead class="table-light rounded">
+                                                <tr>
+                                                    <th>Item</th>
+                                                    <th>Pedagang</th>
+                                                    <th class="text-end">Harga</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="shoppingListBody">
+                                                </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <div class="total-box mt-3">
+                                        Total: <span id="totalPrice" class="fs-5">Rp 0</span>
+                                        <div style="font-size: 0.8rem; opacity: 0.8;">
+                                            (Hemat Rp <span id="savingPrice">0</span> vs Supermarket)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-5 mb-4">
+                            <div class="card card-calc h-100">
+                                <div class="card-body p-4">
+                                    <h5 class="fw-bold mb-4 text-dark"><i class="fas fa-utensils me-2 text-danger"></i>Menu Masakan</h5>
+                                    
+                                    <div id="menuRecommendations">
+                                        </div>
+
+                                    <button class="btn btn-success w-100 fw-bold mt-4 py-3">
+                                        <i class="fab fa-whatsapp me-2"></i>Pesan ke Mitra Pedagang
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="footer"><p>&copy; 2026 SayurDex Admin. Designed by <a href="https://www.templatemo.com" target="_blank" rel="nofollow">TemplateMo</a></p></footer>
+    </div>
+    
+    <script src="templatemo-daynight-script.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Fungsi generate dengan animasi loading
+        function generatePlan() {
+            const budgetInput = document.getElementById('budgetInput');
+            const budget = parseInt(budgetInput.value);
+            const loading = document.getElementById('loadingArea');
+            const result = document.getElementById('resultArea');
+
+            // Validasi input
+            if (!budget || isNaN(budget) || budget < 10000) {
+                alert("Waduh, budget minimal Rp 10.000 ya, biar AI-nya bisa mikir menu yang enak! 😅");
+                return;
+            }
+
+            // Reset tampilan
+            result.style.display = 'none';
+            loading.style.display = 'block';
+            
+            // Scroll ke loading
+            loading.scrollIntoView({behavior: "smooth", block: "center"});
+
+            // Simulasi Delay AI Thinking (biar kerasa canggih)
+            setTimeout(() => {
+                loading.style.display = 'none';
+                result.style.display = 'block';
+                renderResult(budget);
+                // Scroll ke hasil
+                result.scrollIntoView({behavior: "smooth", block: "start"});
+            }, 1200);
+        }
+
+        function renderResult(budget) {
+            let items = [];
+            let menus = [];
+            let total = 0;
+            let supermarketPrice = 0; // Untuk simulasi perbandingan harga
+
+            // LOGIKA UTAMA AI (Based on Budget Tiers)
+            
+            // LEVEL 1: ANAK KOS SURVIVAL (< 30.000)
+            if (budget < 30000) {
+                items = [
+                    { name: "Telur Ayam (1/4 Kg)", seller: "Warung Bu Ijah", price: 8000 },
+                    { name: "Indomie Goreng (3 Bks)", seller: "Toko Kelontong", price: 9000 },
+                    { name: "Sawi Hijau (1 Ikat)", seller: "Lapak Sayur Pojok", price: 3000 },
+                    { name: "Tahu Putih (5 pcs)", seller: "Pabrik Tahu", price: 4000 }
+                ];
+                menus = [
+                    { name: "Mie Dok-Dok Ala Burjo", desc: "Gurih, pedas, mengenyangkan." },
+                    { name: "Tumis Sawi Tahu", desc: "Simpel, sehat, dan murah." },
+                    { name: "Telur Dadar Crispy", desc: "Lauk andalan tanggal tua." }
+                ];
+
+            // LEVEL 2: HEMAT SEHAT (< 60.000)
+            } else if (budget < 60000) {
+                items = [
+                    { name: "Tempe Papan (2 pcs)", seller: "Warung Bu Ijah", price: 10000 },
+                    { name: "Kangkung (2 Ikat)", seller: "Pak Asep Sayur", price: 5000 },
+                    { name: "Ikan Asin Sepat (1 Ons)", seller: "Toko Ikan Kering", price: 8000 },
+                    { name: "Cabai & Bawang Paket", seller: "Pak Asep Sayur", price: 10000 },
+                    { name: "Terong Ungu (2 Buah)", seller: "Lapak Sayur Pojok", price: 4000 },
+                    { name: "Kerupuk Udang Mentah", seller: "Toko Kelontong", price: 6000 }
+                ];
+                menus = [
+                    { name: "Cah Kangkung Terasi", desc: "Aroma menggugah selera." },
+                    { name: "Terong Balado", desc: "Pedas manis bikin nambah nasi." },
+                    { name: "Tempe Goreng Tepung", desc: "Cocok untuk camilan atau lauk." },
+                    { name: "Ikan Asin Goreng Kering", desc: "Pelengkap sempurna." }
+                ];
+
+            // LEVEL 3: HARIAN KELUARGA (< 120.000)
+            } else if (budget < 120000) {
+                items = [
+                    { name: "Ayam Potong (1 Ekor)", seller: "Lapak Mang Ujang", price: 40000 },
+                    { name: "Sayur Sop Paket Lengkap", seller: "Bu Yanti Pasar", price: 10000 },
+                    { name: "Tempe & Tahu Paket", seller: "Pabrik Tahu", price: 12000 },
+                    { name: "Bumbu Racik Ayam & Sop", seller: "Warung Bumbu", price: 5000 },
+                    { name: "Minyak Goreng (500ml)", seller: "Toko Sembako", price: 9000 },
+                    { name: "Buah Pisang Ambon (1 Sisir)", seller: "Kios Buah Segar", price: 15000 },
+                    { name: "Sambal Terasi Botol", seller: "Warung Bu Ijah", price: 8000 }
+                ];
+                menus = [
+                    { name: "Sop Ayam Bening", desc: "Kuah kaldu segar & hangat." },
+                    { name: "Ayam Goreng Lengkuas", desc: "Rempah meresap sampai tulang." },
+                    { name: "Perkedel Kentang/Jagung", desc: "Lauk pendamping favorit." },
+                    { name: "Tempe Bacem", desc: "Manis gurih legit." },
+                    { name: "Pisang Cuci Mulut", desc: "Pencuci mulut sehat." }
+                ];
+
+            // LEVEL 4: SEMI PREMIUM / BBQ RUMAHAN (< 200.000)
+            } else if (budget < 200000) {
+                items = [
+                    { name: "Daging Sapi Slice (500gr)", seller: "MeatShop Lokal", price: 65000 },
+                    { name: "Udang Segar (250gr)", seller: "Pasar Ikan Laut", price: 30000 },
+                    { name: "Jamur Enoki & Kuping", seller: "Sayur Import", price: 15000 },
+                    { name: "Pakcoy & Sawi Putih", seller: "Petani Lembang", price: 12000 },
+                    { name: "Bumbu Saus Bulgogi/Lada Hitam", seller: "Super Store", price: 18000 },
+                    { name: "Bakso Sapi (20 Butir)", seller: "Bakso Mang Oded", price: 20000 },
+                    { name: "Bawang Bombay (2 Btr)", seller: "Lapak Bumbu", price: 5000 },
+                    { name: "Buah Naga (2 Kg)", seller: "Kios Buah Segar", price: 20000 }
+                ];
+                menus = [
+                    { name: "Japanese BBQ (Yakiniku)", desc: "Daging slice bakar ala resto." },
+                    { name: "Suki/Steamboat Rumahan", desc: "Kuah kaldu dengan bakso & sayur." },
+                    { name: "Udang Goreng Mentega", desc: "Gurih creamy anak-anak suka." },
+                    { name: "Tumis Pakcoy Bawang Putih", desc: "Simpel, renyah, bergizi." },
+                    { name: "Es Buah Naga", desc: "Segar dan kaya antioksidan." }
+                ];
+
+            // LEVEL 5: SULTAN PASAR / STOK MINGGUAN (200.000 - 300.000++)
+            } else {
+                items = [
+                    { name: "Ikan Gurame (2 Ekor Besar)", seller: "Kolam Ikan Pak Haji", price: 70000 },
+                    { name: "Cumi-Cumi Basah (500gr)", seller: "Pasar Ikan Laut", price: 45000 },
+                    { name: "Ayam Kampung (1 Ekor)", seller: "Lapak Unggas", price: 65000 },
+                    { name: "Beras Premium (5 Kg)", seller: "Toko Beras Cianjur", price: 72000 },
+                    { name: "Brokoli & Kembang Kol", seller: "Petani Lembang", price: 25000 },
+                    { name: "Minyak Goreng (2 Liter)", seller: "Grosir Sembako", price: 32000 },
+                    { name: "Bumbu Dapur Lengkap (Jahe, Kunyit, dll)", seller: "Warung Rempah", price: 15000 },
+                    { name: "Anggur Merah (500gr)", seller: "Fruit Station", price: 35000 }
+                ];
+                menus = [
+                    { name: "Gurame Asam Manis", desc: "Menu mewah ala kondangan." },
+                    { name: "Opor Ayam Kampung", desc: "Daging empuk, kuah santan gurih." },
+                    { name: "Cumi Saus Padang", desc: "Pedas nendang bikin keringetan." },
+                    { name: "Capcay Seafood & Sayur", desc: "Nutrisi lengkap dalam satu piring." },
+                    { name: "Nasi Liwet Sunda", desc: "Wangi, pulen, mantap." },
+                    { name: "Salad Buah Anggur", desc: "Dessert premium." }
+                ];
+            }
+
+            // Hitung Total & Simulasi Harga Pasar vs Supermarket
+            const listBody = document.getElementById('shoppingListBody');
+            listBody.innerHTML = '';
+            
+            // Loop item untuk render tabel
+            items.forEach((item, index) => {
+                total += item.price;
+                // Simulasi harga supermarket (biasanya 20-30% lebih mahal)
+                supermarketPrice += Math.round(item.price * 1.25); 
+
+                // Animasi delay kecil saat render baris (opsional, biar keren)
+                setTimeout(() => {
+                    listBody.innerHTML += `
+                        <tr class="fade-in-row">
+                            <td>
+                                <div class="fw-bold text-dark">${item.name}</div>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-secondary border border-secondary-subtle">
+                                    <i class="fas fa-store me-1"></i>${item.seller}
+                                </span>
+                            </td>
+                            <td class="text-end fw-bold text-success">
+                                Rp ${item.price.toLocaleString('id-ID')}
+                            </td>
+                        </tr>
+                    `;
+                }, index * 100); // Muncul satu per satu
+            });
+
+            // Update Total Box
+            const saving = Math.max(0, budget - total); // Sisa uang kembalian
+            const marketSaving = supermarketPrice - total; // Hemat dibanding supermarket
+
+            document.getElementById('totalPrice').innerHTML = `
+                Rp ${total.toLocaleString('id-ID')}
+                <div class="small text-muted fw-normal mt-1">Estimasi kembalian: Rp ${saving.toLocaleString('id-ID')}</div>
+            `;
+            
+            document.getElementById('savingPrice').innerText = marketSaving.toLocaleString('id-ID');
+
+            // Render Menu Recommendations
+            const menuContainer = document.getElementById('menuRecommendations');
+            menuContainer.innerHTML = '';
+            
+            menus.forEach((menu, index) => {
+                 setTimeout(() => {
+                    menuContainer.innerHTML += `
+                        <div class="d-flex align-items-center mb-3 border-bottom pb-3 fade-in-row">
+                            <div class="flex-shrink-0 rounded-circle bg-primary bg-opacity-10 text-primary p-3 d-flex align-items-center justify-content-center" style="width: 50px; height:50px;">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-0 fw-bold text-dark">${menu.name}</h6>
+                                <small class="text-muted"><i class="fas fa-check-circle text-success me-1" style="font-size:0.7em;"></i>${menu.desc}</small>
+                            </div>
+                        </div>
+                    `;
+                 }, index * 150);
+            });
+        }
+    </script>
+</body>
+</html>
